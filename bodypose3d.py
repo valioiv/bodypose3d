@@ -8,7 +8,7 @@ mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_pose = mp.solutions.pose
 
-frame_shape = [720, 1280]
+frame_shape = [480, 640]
 
 #add here if you need more keypoints
 pose_keypoints = [16, 14, 12, 11, 13, 15, 24, 23, 25, 26, 27, 28]
@@ -19,7 +19,7 @@ def run_mp(input_stream1, input_stream2, P0, P1):
     cap1 = cv.VideoCapture(input_stream2)
     caps = [cap0, cap1]
 
-    #set camera resolution if using webcam to 1280x720. Any bigger will cause some lag for hand detection
+    #set camera resolution if using webcam to 640x480. Any bigger will cause some lag for hand detection
     for cap in caps:
         cap.set(3, frame_shape[1])
         cap.set(4, frame_shape[0])
@@ -41,9 +41,9 @@ def run_mp(input_stream1, input_stream2, P0, P1):
 
         if not ret0 or not ret1: break
 
-        #crop to 720x720.
+        #crop to 480x480.
         #Note: camera calibration parameters are set to this resolution.If you change this, make sure to also change camera intrinsic parameters
-        if frame0.shape[1] != 720:
+        if frame0.shape[1] != 480:
             frame0 = frame0[:,frame_shape[1]//2 - frame_shape[0]//2:frame_shape[1]//2 + frame_shape[0]//2]
             frame1 = frame1[:,frame_shape[1]//2 - frame_shape[0]//2:frame_shape[1]//2 + frame_shape[0]//2]
 
