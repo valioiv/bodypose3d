@@ -53,15 +53,19 @@ def visualize_3d(p3ds):
 
 
         #ax.set_axis_off()
-        ax.set_xticks([])
-        ax.set_yticks([])
-        ax.set_zticks([])
+        #ax.set_xticks([])
+        #ax.set_yticks([])
+        #ax.set_zticks([])
 
-        ax.set_xlim3d(-10, 10)
+        ax.set_xlim3d(-20, -10)
+        ax.set_ylim3d(-10, 0)
+        ax.set_zlim3d(-10, 0)
+
+        #ax.set_xlim3d(-20, 20)
         ax.set_xlabel('x')
-        ax.set_ylim3d(-10, 10)
+        #ax.set_ylim3d(-20, 20)
         ax.set_ylabel('y')
-        ax.set_zlim3d(-10, 10)
+        #ax.set_zlim3d(-20, 20)
         ax.set_zlabel('z')
         plt.pause(0.1)
         ax.cla()

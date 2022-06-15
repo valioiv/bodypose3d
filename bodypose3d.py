@@ -1,5 +1,6 @@
 import cv2 as cv
 import mediapipe as mp
+import matplotlib.pyplot as plt
 import numpy as np
 import sys
 from utils import DLT, get_projection_matrix, write_keypoints_to_disk
@@ -11,7 +12,53 @@ mp_pose = mp.solutions.pose
 frame_shape = [480, 640]
 
 #add here if you need more keypoints
-pose_keypoints = [16, 14, 12, 11, 13, 15, 24, 23, 25, 26, 27, 28]
+#pose_keypoints = [16, 14, 12, 11, 13, 15, 24, 23, 25, 26, 27, 28]
+pose_keypoints = [ 0, 2, 5, 16, 14, 12, 11, 13, 15, 24, 23, 25, 26, 27, 28 ]
+
+plt.style.use('seaborn')
+
+def visualize_3d(fig, ax, p3ds):
+    ax.set_xlim3d(-10, 5)
+    ax.set_ylim3d(-5, 10)
+    ax.set_zlim3d(15, 35)
+    ax.set_xlabel('x')
+    ax.set_ylabel('y')
+    ax.set_zlabel('z')
+
+    """Now visualize in 3D"""
+    # torso = [[0, 1] , [1, 7], [7, 6], [6, 0]]
+    # armr = [[1, 3], [3, 5]]
+    # arml = [[0, 2], [2, 4]]
+    # #legr = [[6, 8], [8, 10]]
+    # #legl = [[7, 9], [9, 11]]
+
+    face = [[0, 1], [0, 2]]
+    torso = [[0+3, 1+3] , [1+3, 7+3], [7+3, 6+3], [6+3, 0+3]]
+    armr = [[1+3, 3+3], [3+3, 5+3]]
+    arml = [[0+3, 2+3], [2+3, 4+3]]
+    #legr = [[6, 8], [8, 10]]
+    #legl = [[7, 9], [9, 11]]
+
+    #body = [torso, arml, armr, legr, legl]
+    body = [torso, arml, armr, face]
+    #colors = ['red', 'blue', 'green', 'black', 'orange']
+    colors = ['red', 'blue', 'green', 'orange']
+
+    from mpl_toolkits.mplot3d import Axes3D
+
+    kpts3d = p3ds
+
+    for bodypart, part_color in zip(body, colors):
+        for _c in bodypart:
+            ax.plot(xs = [kpts3d[_c[0],0], kpts3d[_c[1],0]], ys = [kpts3d[_c[0],1], kpts3d[_c[1],1]], zs = [kpts3d[_c[0],2], kpts3d[_c[1],2]], linewidth = 4, c = part_color)
+
+    #uncomment these if you want scatter plot of keypoints and their indices.
+    # for i in range(12):
+    #     #ax.text(kpts3d[i,0], kpts3d[i,1], kpts3d[i,2], str(i))
+    #     #ax.scatter(xs = kpts3d[i:i+1,0], ys = kpts3d[i:i+1,1], zs = kpts3d[i:i+1,2])
+
+    plt.pause(0.04)
+    ax.cla()
 
 def run_mp(input_stream1, input_stream2, P0, P1):
     #input video stream
@@ -33,6 +80,26 @@ def run_mp(input_stream1, input_stream2, P0, P1):
     kpts_cam0 = []
     kpts_cam1 = []
     kpts_3d = []
+
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    #ax.set_axis_off()
+    #ax.set_xticks([])
+    #ax.set_yticks([])
+    #ax.set_zticks([])
+
+    ax.set_xlim3d(-20, -10)
+    ax.set_ylim3d(-8, -4)
+    ax.set_zlim3d(-10, 0)
+
+    #ax.set_xlim3d(-20, 20)
+    ax.set_xlabel('x')
+    #ax.set_ylim3d(-20, 20)
+    ax.set_ylabel('y')
+    #ax.set_zlim3d(-20, 20)
+    ax.set_zlabel('z')
+
     while True:
 
         #read frames from stream
@@ -63,6 +130,10 @@ def run_mp(input_stream1, input_stream2, P0, P1):
         frame1.flags.writeable = True
         frame0 = cv.cvtColor(frame0, cv.COLOR_RGB2BGR)
         frame1 = cv.cvtColor(frame1, cv.COLOR_RGB2BGR)
+
+        # print("\n")
+        # print(results0.pose_landmarks)
+        # print("\n")
 
         #check for keypoints detection
         frame0_keypoints = []
@@ -111,12 +182,19 @@ def run_mp(input_stream1, input_stream2, P0, P1):
                 _p3d = DLT(P0, P1, uv1, uv2) #calculate 3d position of keypoint
             frame_p3ds.append(_p3d)
 
+        #print("\n")
+        #print(frame_p3ds)
+        #print("\n")
+
         '''
         This contains the 3d position of each keypoint in current frame.
         For real time application, this is what you want.
         '''
-        frame_p3ds = np.array(frame_p3ds).reshape((12, 3))
+        frame_p3ds = np.array(frame_p3ds).reshape((len(pose_keypoints), 3))
         kpts_3d.append(frame_p3ds)
+
+        #print("\n\n", frame_p3ds, "\n\n")
+        visualize_3d(fig, ax, frame_p3ds)
 
         # uncomment these if you want to see the full keypoints detections
         # mp_drawing.draw_landmarks(frame0, results0.pose_landmarks, mp_pose.POSE_CONNECTIONS,
