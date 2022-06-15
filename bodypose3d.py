@@ -13,7 +13,7 @@ frame_shape = [480, 640]
 
 #add here if you need more keypoints
 #pose_keypoints = [16, 14, 12, 11, 13, 15, 24, 23, 25, 26, 27, 28]
-pose_keypoints = [ 0, 2, 5, 16, 14, 12, 11, 13, 15, 24, 23, 25, 26, 27, 28 ]
+pose_keypoints = [ 0, 2, 5, 7, 8, 9, 10, 16, 14, 12, 11, 13, 15, 24, 23, 25, 26, 27, 28 ]
 
 plt.style.use('seaborn')
 
@@ -32,17 +32,18 @@ def visualize_3d(fig, ax, p3ds):
     # #legr = [[6, 8], [8, 10]]
     # #legl = [[7, 9], [9, 11]]
 
-    face = [[0, 1], [0, 2]]
-    torso = [[0+3, 1+3] , [1+3, 7+3], [7+3, 6+3], [6+3, 0+3]]
-    armr = [[1+3, 3+3], [3+3, 5+3]]
-    arml = [[0+3, 2+3], [2+3, 4+3]]
-    #legr = [[6, 8], [8, 10]]
-    #legl = [[7, 9], [9, 11]]
+    head = [[0, 1], [1, 3], [0, 2], [2, 4]]
+    mouth = [[5, 6]]
+    torso = [[7, 8] , [8, 14], [14, 13], [13, 7]]
+    armr = [[8, 10], [10, 12]]
+    arml = [[7, 9], [9, 11]]
+    #legr = [[6+7, 8+7], [8+7, 10+7]]
+    #legl = [[7+7, 9+7], [9+7, 11+7]]
 
     #body = [torso, arml, armr, legr, legl]
-    body = [torso, arml, armr, face]
+    body = [torso, arml, armr, head, mouth]
     #colors = ['red', 'blue', 'green', 'black', 'orange']
-    colors = ['red', 'blue', 'green', 'orange']
+    colors = ['red', 'blue', 'green', 'orange', 'cyan']
 
     from mpl_toolkits.mplot3d import Axes3D
 
@@ -144,7 +145,7 @@ def run_mp(input_stream1, input_stream2, P0, P1):
                 pxl_y = landmark.y * frame0.shape[0]
                 pxl_x = int(round(pxl_x))
                 pxl_y = int(round(pxl_y))
-                cv.circle(frame0,(pxl_x, pxl_y), 3, (0,0,255), -1) #add keypoint detection points into figure
+                cv.circle(frame0,(pxl_x, pxl_y), 3, (0,255,0), -1) #add keypoint detection points into figure
                 kpts = [pxl_x, pxl_y]
                 frame0_keypoints.append(kpts)
         else:
@@ -162,7 +163,7 @@ def run_mp(input_stream1, input_stream2, P0, P1):
                 pxl_y = landmark.y * frame1.shape[0]
                 pxl_x = int(round(pxl_x))
                 pxl_y = int(round(pxl_y))
-                cv.circle(frame1,(pxl_x, pxl_y), 3, (0,0,255), -1)
+                cv.circle(frame1,(pxl_x, pxl_y), 3, (255,255,0), -1)
                 kpts = [pxl_x, pxl_y]
                 frame1_keypoints.append(kpts)
 
