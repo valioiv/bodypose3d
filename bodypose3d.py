@@ -1,3 +1,5 @@
+import math
+
 import cv2 as cv
 import mediapipe as mp
 import matplotlib.pyplot as plt
@@ -52,6 +54,13 @@ def visualize_3d(fig, ax, p3ds):
     for bodypart, part_color in zip(body, colors):
         for _c in bodypart:
             ax.plot(xs = [kpts3d[_c[0],0], kpts3d[_c[1],0]], ys = [kpts3d[_c[0],1], kpts3d[_c[1],1]], zs = [kpts3d[_c[0],2], kpts3d[_c[1],2]], linewidth = 4, c = part_color)
+
+    # Print distance between nose and (0, 0, 0):
+    nose_x = kpts3d[0][0]
+    nose_y = kpts3d[0][1]
+    nose_z = kpts3d[0][2]
+    nose_dist = math.sqrt(nose_x**2 + nose_y**2 + nose_z**2) * 6 # multiply by 6cm - this is the square length
+    print(nose_dist)
 
     #uncomment these if you want scatter plot of keypoints and their indices.
     # for i in range(12):
